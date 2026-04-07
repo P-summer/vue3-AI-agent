@@ -1,4 +1,4 @@
-const BACKEND_URL = "http://localhost:3000"; // 后端地址，生产环境请使用环境变量
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export const douBaoAgentStream = async (
   message: string,
@@ -58,13 +58,14 @@ export const douBaoAgentStream = async (
 export const sendAiMessageStreams = async (
   message: string,
   sessionId: string,
+  modelPath: string = "/api/deepSeekAgentStream",
   onChunk: (chunk: string) => void,
   onDone: (fullContent: string) => void,
   onError: (error: string) => void,
   onTitleUpdated?: (title: string) => void,
 ) => {
   const token = localStorage.getItem("token");
-  const response = await fetch(`${BACKEND_URL}/api/chatDeepSeek`, {
+  const response = await fetch(`${BACKEND_URL}${modelPath}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

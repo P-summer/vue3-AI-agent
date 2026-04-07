@@ -88,12 +88,13 @@ const chatHistoryRef = ref<HTMLDivElement | null>(null);
 
 // 模型选项配置
 const modelOptions = [
-  { label: "DeepSeek-V3.2", value: "deepseek" },
-  { label: "doubao", value: "doubao" },
+  { label: "DeepSeek-V3.2", value: "/api/deepSeekAgentStream" },
+  { label: "doubao", value: "/api/douBaoChat" },
+  { label: "planner", value: "/api/chatDeepSeek" },
 ];
 // 默认模型（优先读取本地存储）
 const selectedModel = ref<string>(
-  localStorage.getItem("selectedModel") || "deepseek",
+  localStorage.getItem("selectedModel") || "/api/deepSeekAgentStream",
 );
 
 // 监听模型变化，持久化到本地
@@ -174,25 +175,15 @@ const handleSend = async () => {
 
   // 根据选中的模型调用不同的流式接口
   try {
-    if (selectedModel.value === "deepseek") {
-      await sendAiMessageStreams(
-        prompt,
-        session.value.ext_session_id,
-        onChunk,
-        onDone,
-        onError,
-        onTitleUpdated,
-      );
-    } else {
-      await douBaoAgentStream(
-        prompt,
-        session.value.ext_session_id,
-        onChunk,
-        onDone,
-        onError,
-        onTitleUpdated,
-      );
-    }
+    await sendAiMessageStreams(
+      prompt,
+      session.value.ext_session_id,
+      selectedModel.value,
+      onChunk,
+      onDone,
+      onError,
+      onTitleUpdated,
+    );
     chatStore.initSessions();
   } catch (e) {
     const errMsg = (e as Error).message || "发送失败";
