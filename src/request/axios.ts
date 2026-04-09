@@ -2,8 +2,10 @@ import axios from "axios";
 import { ElMessage } from "element-plus";
 import { useAuthStore } from "@/stores/auth";
 
-// 环境变量配置后端地址（推荐）
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+// 开发环境用本地后端地址，生产环境用空字符串（相对路径）
+const BACKEND_URL = import.meta.env.DEV
+  ? "http://localhost:3000"
+  : import.meta.env.VITE_BACKEND_URL || "";
 
 const service = axios.create({
   baseURL: BACKEND_URL,
